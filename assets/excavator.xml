@@ -1,0 +1,205 @@
+<mujoco model="assets_v6">
+  <compiler angle="radian" meshdir="meshes" texturedir="texture"/>
+
+  <include file="./common/visual.xml" />
+  <include file="./common/skybox.xml" />
+  <include file="./common/materials.xml" />
+
+
+  <default>
+    <mesh scale="1 1 1" />
+    <!-- <material emission="0.25" rgba="1 1 1 1"/> -->
+    <!-- <equality solref="0.010 1" /> -->
+    <default class="ghost">
+      <geom material="target" contype="0" conaffinity="0"/>
+    </default>
+    <default class="visual">
+      <geom group="2" type="mesh" contype="0" conaffinity="0"/>
+    </default>
+    <default class="collision">
+      <geom group="3" type="mesh" condim="3" solref="0.01 1" solimp=".90 .99 0.001"/>
+    </default>
+    <default class="box">
+      <geom margin="0.05" condim="3" solref="0.01 1" solimp="0 .5 0.05"/>
+    </default>
+    <default class="particle">
+      <geom group="4" type="mesh"/>
+    </default>
+  </default>
+
+  <!-- <option solver="CG" timestep="0.005" integrator="implicitfast"/> -->
+  <option solver="CG" timestep="0.005" integrator="implicitfast" gravity="0 0 -9.81"/>
+  <visual>
+    <scale
+        forcewidth="0.03" 
+        contactwidth="0.05" 
+        contactheight="0.05"
+        framelength="0.3" 
+        framewidth="0.03"
+        jointlength="0.5"
+        jointwidth="0.05" />
+    <global offwidth="1920" offheight="1080"/>
+  </visual>
+
+  <asset>
+    <mesh name="carriage" file="carriage.STL"/>
+    <mesh name="cabin" file="cabin.STL"/>
+    <mesh name="boom" file="boom.STL"/>
+    <mesh name="arm" file="arm.STL"/>
+    <mesh file="./bucket/bucket.obj"/>
+    <mesh file="./bucket/bucket_collision_0.obj"/>
+    <mesh file="./bucket/bucket_collision_1.obj"/>
+    <mesh file="./bucket/bucket_collision_2.obj"/>
+    <mesh file="./bucket/bucket_collision_3.obj"/>
+    <mesh file="./bucket/bucket_collision_4.obj"/>
+    <mesh file="./bucket/bucket_collision_5.obj"/>
+    <mesh file="./bucket/bucket_collision_6.obj"/>
+    <mesh file="./bucket/bucket_collision_7.obj"/>
+    <mesh file="./bucket/bucket_collision_8.obj"/>
+    <mesh file="./bucket/bucket_collision_9.obj"/>
+  </asset>
+  <worldbody>
+    <site name="test_point" type="sphere" pos="0 0 0" size=".1" rgba="1 1 1 1"/>
+    <geom name="floor" size="0 0 0.1" type="plane" material="grid" pos="0 0 -1" />
+    <body name="dig_ground" pos="-1 -0.5 0">
+      <geom name="box1" type="box" size="5.5 8 0.5" pos="-2.5 0 -0.5" rgba="0.68 0.41 0.04 1" class="box"/>    
+      <geom name="box2" type="box" size="2.5 2.5 0.5" pos="5.5 5.5 -0.5" rgba="0.68 0.41 0.04 1" class="box"/>
+      <!-- <geom name="box3" type="box" size="1.5 1 0.5" pos="6.5 2 -0.5" rgba="0.68 0.41 0.04 1" class="box"/> -->
+      <geom name="box3" type="box" size="1 1 0.5" pos="7 2 -0.5" rgba="0.68 0.41 0.04 1" class="box"/>
+      <geom name="box4" type="box" size="2.5 4.5 0.5" pos="5.5 -3.5 -0.5" rgba="0.68 0.41 0.04 1" class="box"/>
+      <body name="dig_area" pos="4 2 0">
+        <geom type="capsule" pos="-0.8 0.8 -0.8" size=".1 .1" zaxis=".5 0 1" group="1" condim="1"/>
+        <!-- <site name="dig_point" type="sphere" pos="0.7 0.1 0.8" size=".05" rgba="0 1 1 1"/> -->
+        <site name="dig_point" type="sphere" pos="0.3 0.3 0.5" size=".05" rgba="0 0 1 1"/>
+        <!-- <site name="touch_point" type="sphere" pos=".2 .3 -0.1" size=".05" rgba="0 0 1 1"/> -->
+        <site name="deep_point" type="sphere" pos="-0.15 0.05 -0.6" size=".05" rgba="1 0 1 1"/>
+        <site name="finish_point" type="sphere" pos="-0.4 -0.4 0.5" size=".05" rgba="1 1 1 1"/>
+      </body>
+    </body>
+
+    <geom type="mesh" rgba="0.29804 0.29804 0.29804 1" mesh="carriage"/>
+
+    <body name="unload_area" pos="1 -2.25 1.2">
+      <site name="unload_point" type="sphere" pos="0 0 -0.2" size=".05" rgba="1 0.5 0.5 1"/>
+      <replicate count="4" euler="0 0 1.5708">
+        <geom type="box" size="0.3 1 0.02" rgba=".5 .5 .5 1" zaxis="1 0 0"  pos="1 0 -0.9"/>
+      </replicate>
+    </body>
+
+    <body name="cabin" pos="0.00089284 0 0.6096">
+      <inertial pos="-0.078685 -0.043479 0.50001" quat="0.0751805 0.797087 0.0580812 0.596345" mass="662.68" diaginertia="184.819 143.205 112.966"/>
+      <joint name="cabin" pos="0 0 0" axis="0 0 1" range="-2.4 2.4"/>
+      <geom type="mesh" rgba="1 1 1 1" mesh="cabin"  condim="1" solref="0.015 1" solimp=".90 .99 .003"/>
+      <site name="boom_cylinder" type="sphere" size=".01" class="ghost" pos="1.199226 -0.1175 0.15" rgba="1 0 0 1"/>
+
+      <body name="boom" pos="1.0112 -0.1175 0.38">
+        <inertial pos="0.94259 0 0.85212" quat="0.594324 0.383118 0.383118 0.594324" mass="73.902" diaginertia="31.666 29.5725 2.39776"/>
+        <joint name="boom" pos="0 0 0" axis="0 1 0" range="-0.5112 0.7163"/>
+        <geom type="mesh" rgba="0.49804 0.49804 0.49804 1" mesh="boom"  condim="1" solref="0.015 1" solimp=".90 .99 .003"/>
+        <site name="boom_rod" type="sphere" size=".01" class="ghost" pos="0.86607 0 0.803401" rgba="1 0 0 1"/>
+        <site name="arm_cylinder" type="sphere" size=".01" class="ghost" pos="1.003296 0 1.27206" rgba="1 0 0 1"/>
+        <site name="boom" pos="0 0 0" type="sphere" size=".01" class="ghost" rgba="0 0 1 1" />
+
+        <body name="arm" pos="2.3923 0 1.1251">
+          <inertial pos="0.42568 0 -0.29923" quat="0.658729 -0.257052 -0.257052 0.658729" mass="34.418" diaginertia="6.1521 5.98664 0.244664"/>
+          <joint name="arm" pos="0 0 0" axis="0 1 0" range="-0.842 1.7118"/>
+          <geom type="mesh" rgba="0.49804 0.49804 0.49804 1" mesh="arm"  condim="1" solref="0.015 1" solimp=".90 .99 .003"/>
+          <site name="arm_rod" type="sphere" size=".01" class="ghost" pos="-0.102799 0 0.214929" rgba="1 0 0 1"/>
+          <site name="bucket_cylinder" type="sphere" size=".01" class="ghost" pos="0.398109 0 0.046513" rgba="1 0 0 1"/>
+          <site name="blink2" type="sphere" size=".01" class="ghost" pos="0.883509	0	-0.794396" rgba="1 0 0 1"/>
+          <site name="arm" pos="0 0 0" type="sphere" size=".01" class="ghost" rgba="0 0 1 1" />
+
+          <body name="bucket" pos="0.9898 0 -0.91079">
+            <inertial pos="0.31448 -6.095e-07 -0.14804" quat="0.979857 -0.000110612 -0.1997 -2.48249e-05" mass="57.008" diaginertia="4.65539 3.2158 3.14461"/>
+            <joint name="bucket" pos="0 0 0" axis="0 1 0" range="-0.8938 1.2037"/> 
+            <geom mesh="bucket" class="visual" material="effector"/>
+            <geom mesh="bucket_collision_0" rgba="0.9883833413344946 0.7324760285346823 0.8225100423612204 1" class="collision"/>
+            <geom mesh="bucket_collision_1" rgba="0.469744822814668 0.6771043808967685 0.9601620006937586 1" class="collision"/>
+            <geom mesh="bucket_collision_2" rgba="0.6505830477412035 0.0844495067229446 0.2534466438255757 1" class="collision"/>
+            <geom mesh="bucket_collision_3" rgba="0.4798370018131669 0.500947967533492 0.5107464613057571 1" class="collision"/>
+            <geom mesh="bucket_collision_4" rgba="0.7057545137953224 0.017322426701952942 0.6508942886024297 1" class="collision"/>
+            <geom mesh="bucket_collision_5" rgba="0.8756571060567075 0.5220404655774245 0.8763972327880879 1" class="collision"/>
+            <geom mesh="bucket_collision_6" rgba="0.7363804167793061 0.10783675812356741 0.47574766982057104 1" class="collision"/>
+            <geom mesh="bucket_collision_7" rgba="0.7983645477334317 0.7607894026798553 0.9109017917939453 1" class="collision"/>
+            <geom mesh="bucket_collision_8" rgba="0.5708876840812068 0.2862078523717222 0.7094102644736814 1" class="collision"/>
+            <geom mesh="bucket_collision_9" rgba="0.9712561059855046 0.9477134645716383 0.5424044264821968 1" class="collision"/>
+            <site name="blink1" type="sphere" size=".01" class="ghost" pos="0.14862 0 0.11488" rgba="1 0 0 1"/>
+            <site name="bucket" pos="0 0 0" type="sphere" size=".01" class="ghost" rgba="0 0 1 1" />
+            <site name="bucket_attach" type="sphere" size=".05" class="ghost" pos="0.33 0 -0.63" rgba="1 0 0 1"/>
+            <site name="bucket_bottom" type="sphere" size=".05" class="ghost" pos="0.49 0 -0.25" rgba="1 0 0 1"/>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <!-- <body name="soil" pos="3 1.5 -0.5">
+      <replicate count="9" offset="0.2 0 0">
+        <replicate count="9" offset="0 .2 0">
+          <replicate count="9" offset="0 0 .2">
+            <body name="particle" pos="-0.85 -0.85 -0.75">
+              <joint type="slide" axis="1 0 0" group="3"/>
+              <joint type="slide" axis="0 1 0" group="3"/>
+              <joint type="slide" axis="0 0 1" group="3"/>
+              <geom size="0.08" condim="6" priority="1" contype="1" conaffinity="1" rgba="0.8 0.2 0.1 1" solref="0.03 1" solimp=".01 .2 0.05"/>
+            </body>
+          </replicate>
+        </replicate>
+      </replicate>
+    </body> -->
+
+    <!-- <body name="soil" pos="3 1.5 -0.9">
+     <geom name="box5" type="box" size="1 1 0.3" pos="0 0 -0.15" rgba="0.68 0.41 0.04 1" class="box"/>
+      <replicate count="14" offset="0.221 0 0">
+        <replicate count="9" offset="0 .221 0">
+          <replicate count="7" offset="0 0 .221">
+            <body name="particle" pos="-.9 -.9 .25">
+              <joint type="slide" axis="1 0 0"/>
+              <joint type="slide" axis="0 1 0"/>
+              <joint type="slide" axis="0 0 1"/>
+              <geom size="0.11" condim="4" priority="1" contype="1" conaffinity="1" rgba="0.8 0.2 0.1 1" solref="0.03 1" solimp=".01 .2 0.05"/>
+            </body>
+          </replicate>
+        </replicate>
+      </replicate>
+    </body> -->
+  </worldbody>
+
+  <contact>
+    <exclude body1="boom" body2="arm" />
+    <exclude body1="boom" body2="cabin" />
+    <exclude body1="boom" body2="bucket" />
+    <exclude body1="arm" body2="bucket" />
+    <exclude body1="cabin" body2="world" />
+  </contact>
+
+  <!-- add force range to the pos actuator -->
+  <actuator>
+    <position name="swing_pos" joint="cabin" ctrlrange="-2400 2400" forcerange="-12.330 12.330" gear="1000" kp="10"/>
+    <velocity name="swing_vel" joint="cabin" ctrlrange="-1430 1430" forcerange="-12.330 12.330" gear="1000" kv="0.3"/>
+
+    <!-- <position name="boom_pos" joint="boom" ctrlrange="-720 515" forcerange="-17.540 22.685" gear="1000" kp="160"/>
+    <velocity name="boom_vel" joint="boom" ctrlrange="-1100 900" forcerange="-17.540 22.685" gear="1000" kv="3"/> -->
+
+    <position name="boom_pos" joint="boom" ctrlrange="-511.2 716.3" forcerange="-1754 2268.5" gear="1000" kp="160"/>
+    <velocity name="boom_vel" joint="boom" ctrlrange="-1100 900" forcerange="-1754 2268.5" gear="1000" kv="3"/>
+
+    <position name="arm_pos" joint="arm" ctrlrange="-842 1711.8" forcerange="-9.740 13.865" gear="1000" kp="10"/>
+    <velocity name="arm_vel" joint="arm"  ctrlrange="-4300 3000" forcerange="-9.740 13.865" gear="1000" kv="0.3"/>
+
+    <position name="bucket_pos" joint="bucket" ctrlrange="-893.8 1203.7" forcerange="-9.790 13.936" gear="1000" kp="5"/>
+    <velocity name="bucket_vel" joint="bucket"  ctrlrange="-1900 1400" forcerange="-9.790 13.936" gear="1000" kv="0.1"/>
+  </actuator>
+
+  <sensor>
+    <jointvel name="jointvel_swing" joint="cabin" />
+    <jointpos name="jointpos_swing" joint="cabin" />
+    <jointvel name="jointvel_boom" joint="boom" />
+    <jointpos name="jointpos_boom" joint="boom" />
+    <jointvel name="jointvel_arm" joint="arm" />
+    <jointpos name="jointpos_arm" joint="arm" />
+    <jointvel name="jointvel_bucket" joint="bucket" />
+    <jointpos name="jointpos_bucket" joint="bucket" />
+    <framelinacc name="attach_linacc" objtype= "site" objname="bucket_attach"/>
+    <framelinvel name="attach_linvel" objtype= "site" objname="bucket_attach"/>
+  </sensor>
+</mujoco>

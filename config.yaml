@@ -1,0 +1,50 @@
+defaults:
+  - _self_  
+  - override hydra/hydra_logging: default  
+  - override hydra/job_logging: default  
+
+hydra:
+  output_subdir: null
+  run:
+    dir: logs/${policy}/${task}/${version}/${now:%m%d_%H%M}
+
+seed: 45
+
+# env
+domain: manipulator
+task: digging_soil
+version: ${seed}
+
+# tensorboard
+log_dir: logs/${policy}/${task}/${version}
+model_log_dir: logs/${policy}/${task}/${version}/${now:%m%d_%H%M}
+tb_log_dir: logs/${policy}/${task}/${version}
+tb_log_name: ${now:%m%d_%H%M}
+final_model_name: 
+
+# training
+policy: PPO
+reward_threshold: 500
+timesteps: 1000000
+eval_freq: 2
+batch_size: 256
+gamma: 0.99
+lr: 5e-4
+
+init_mj_angle:
+  swing: [0, 0, 0, 0]
+  digging: [0.45, -0.2, 0.35, 0.15]
+  lifting: [0.532, 0.272, 0.614, -0.068]
+  digging_soil: [0.45, -0.2, 0.35, 0.15]
+  hauling: [0.449, -0.028, 0.872, 1.177]
+
+num_actions:
+  swing: 4
+  digging: 4
+  lifting: 4
+  digging_soil: 3
+  hauling: 4
+
+exp_name: default
+task_title: ???
+
